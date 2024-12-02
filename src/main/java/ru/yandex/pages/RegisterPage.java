@@ -2,24 +2,31 @@ package ru.yandex.pages;
 
 import com.github.javafaker.Faker;
 import io.qameta.allure.Step;
+import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import ru.yandex.data.StaticData;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 public class RegisterPage extends StaticData {
 
+    private final WebDriver driver;
+
+    public RegisterPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    protected static final String REGISTER_PAGE_URL = "https://stellarburgers.nomoreparties.site/register";
     public static final By LOGIN_BUTTON = By.xpath(".//a[contains(text(),'Войти')]");
     public static final By ERROR_MESSAGE = By.xpath(".//p[contains(text(),'Некорректный пароль')]");
     public static final By NAME_FIELD = By.xpath(".//fieldset[1]//input");
     public static final By EMAIL_FIELD = By.xpath(".//fieldset[2]//input");
     public static final By PASSWORD_FIELD = By.xpath(".//fieldset[3]//input");
     public static final By REGISTER_BUTTON = By.xpath(".//div/form/button");
-
-
-    Faker faker = new Faker();
-    String name = faker.name().firstName();
-    String email = faker.internet().emailAddress();
-    String password = faker.internet().password();
-    String incorrectPassword = faker.internet().password(2, 5);
 
 
     @Step("Переход на страницу регистрации")
@@ -62,5 +69,19 @@ public class RegisterPage extends StaticData {
         return driver.findElement(ERROR_MESSAGE).getText();
     }
 
+    @Step("Удаление пользователя")
+    public void delete(String accessToken) {
+        Response response = given()
+                .header("Content-type", "application/json")
+                .auth().oauth2(accessToken)
+                .when()
+                .delete("/api/auth/user");
 
+    }
+
+    public String getItemFromLocalStorage(String accessToken) {
+        return (String)
+                ((JavascriptExecutor) driver)
+                        .executeScript(String.format("return window.localStorage.getItem('%s');", accessToken));
+    }
 }

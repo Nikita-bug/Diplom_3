@@ -2,10 +2,18 @@ package ru.yandex.pages;
 
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import ru.yandex.data.StaticData;
 
 public class LoginPage extends StaticData {
 
+    private final WebDriver driver;
+
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    protected static final String LOGIN_PAGE_URL = "https://stellarburgers.nomoreparties.site/login";
     //Заголовок формы входа
     public static final By AUTHORIZATION_WINDOW_TITLE = By.xpath(".//div[@class = 'Auth_login__3hAey']");
     public static final By LOGIN_TITLE = By.xpath(".//h2[contains(text(),'Вход')]");
@@ -29,12 +37,12 @@ public class LoginPage extends StaticData {
 
     @Step("Заполнение поля почты")
     public void typeEmail() {
-        driver.findElement(AUTHORIZATION_EMAIL_FIELD).sendKeys(EMAIL);
+        driver.findElement(AUTHORIZATION_EMAIL_FIELD).sendKeys(email);
     }
 
     @Step("Заполнение поля пароля")
     public void typePassword() {
-        driver.findElement(AUTHORIZATION_PASSWORD_FIELD).sendKeys(PASSWORD);
+        driver.findElement(AUTHORIZATION_PASSWORD_FIELD).sendKeys(password);
     }
 
     @Step("Клик по кнопке авторизации")

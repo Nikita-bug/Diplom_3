@@ -1,71 +1,123 @@
 package ru.yandex;
 
+import driver.DriverCreator;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.RestAssured;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import ru.yandex.data.StaticData;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.yandex.pages.LoginPage;
 import ru.yandex.pages.MainPage;
 import ru.yandex.pages.PersonalAccountPage;
+import ru.yandex.pages.RegisterPage;
 
 import java.time.Duration;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 
-public class MainPageTest extends StaticData {
+public class MainPageTest  {
 
+    private static WebDriver driver;
+    private static String accessToken;
+    private static RegisterPage registerPage;
+    private static LoginPage loginPage;
 
     @Before
     public void setUp() throws Exception {
-
-        driver = new ChromeDriver();
+        RestAssured.baseURI = "https://stellarburgers.nomoreparties.site";
+        driver = DriverCreator.createWebDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
-
     }
 
 
     @DisplayName("Переход в секцию с начинками")
     @Test
     public void transitionToSectionIngredientsTest() {
-        MainPage mainPage = new MainPage();
+        MainPage mainPage = new MainPage(driver);
         mainPage.openMainPage();
         mainPage.clickIngredientSection();
-        String ingredientsSection = mainPage.textFromIngredientSection();
-        assertThat("Отсутствует необходимый заголовок", ingredientsSection, containsString("Начинки"));
+        WebElement element =
+                driver.findElement(By.xpath(".//img[@alt='Мясо бессмертных моллюсков Protostomia']"));
+
+        boolean isElementInViewport =
+                new WebDriverWait(driver, Duration.ofSeconds(10))
+                        .until(
+                                driver -> {
+                                    Rectangle rect = element.getRect();
+                                    Dimension windowSize = driver.manage().window().getSize();
+
+                                    // условие, которое проверяем внутри явного ожидания
+                                    return rect.getX() >= 0
+                                            && rect.getY() >= 0
+                                            && rect.getX() + rect.getWidth() <= windowSize.getWidth()
+                                            && rect.getY() + rect.getHeight() <= windowSize.getHeight();
+                                });
+        assertTrue("Элемент не находится в области видимости", isElementInViewport);
     }
 
     @DisplayName("Переход в секцию с соусами")
     @Test
     public void transitionToSectionSaucesTest() {
-        MainPage mainPage = new MainPage();
+        MainPage mainPage = new MainPage(driver);
         mainPage.openMainPage();
         mainPage.clickSaucesSection();
-        String ingredientsSection = mainPage.textFromSaucesSection();
-        assertThat("Отсутствует необходимый заголовок", ingredientsSection, containsString("Соусы"));
+        WebElement element =
+                driver.findElement(By.xpath(".//img[@alt='Соус Spicy-X']"));
+
+        boolean isElementInViewport =
+                new WebDriverWait(driver, Duration.ofSeconds(10))
+                        .until(
+                                driver -> {
+                                    Rectangle rect = element.getRect();
+                                    Dimension windowSize = driver.manage().window().getSize();
+
+                                    // условие, которое проверяем внутри явного ожидания
+                                    return rect.getX() >= 0
+                                            && rect.getY() >= 0
+                                            && rect.getX() + rect.getWidth() <= windowSize.getWidth()
+                                            && rect.getY() + rect.getHeight() <= windowSize.getHeight();
+                                });
+
     }
 
     @DisplayName("Переход в секцию с булочками")
     @Test
     public void transitionToSectionBunsTest() {
-        MainPage mainPage = new MainPage();
+        MainPage mainPage = new MainPage(driver);
         mainPage.openMainPage();
         mainPage.clickIngredientSection();
         mainPage.clickBunsSection();
-        String ingredientsSection = mainPage.textFromBunsSection();
-        assertThat("Отсутствует необходимый заголовок", ingredientsSection, containsString("Булки"));
+        WebElement element =
+                driver.findElement(By.xpath(".//img[@alt='Флюоресцентная булка R2-D3']"));
+
+        boolean isElementInViewport =
+                new WebDriverWait(driver, Duration.ofSeconds(10))
+                        .until(
+                                driver -> {
+                                    Rectangle rect = element.getRect();
+                                    Dimension windowSize = driver.manage().window().getSize();
+
+                                    // условие, которое проверяем внутри явного ожидания
+                                    return rect.getX() >= 0
+                                            && rect.getY() >= 0
+                                            && rect.getX() + rect.getWidth() <= windowSize.getWidth()
+                                            && rect.getY() + rect.getHeight() <= windowSize.getHeight();
+                                });
+
     }
 
     @DisplayName("Переход на страницу авторизации из хэдера")
     @Test
     public void transitionToLoginPageFromHeaderTest() {
-        MainPage mainPage = new MainPage();
-        LoginPage loginPage = new LoginPage();
+        MainPage mainPage = new MainPage(driver);
+        LoginPage loginPage = new LoginPage(driver);
         mainPage.openMainPage();
         mainPage.clickPersonalAccountButtonInHeader();
         String actualTitle = loginPage.textInAuthorizationTitle();
@@ -75,8 +127,8 @@ public class MainPageTest extends StaticData {
     @DisplayName("Переход на страницу авторизации через кнопку по центру страницы")
     @Test
     public void transitionToLoginPageFromButtonTest() {
-        MainPage mainPage = new MainPage();
-        LoginPage loginPage = new LoginPage();
+        MainPage mainPage = new MainPage(driver);
+        LoginPage loginPage = new LoginPage(driver);
         mainPage.openMainPage();
         mainPage.clickPersonalAccountButton();
         String actualTitle = loginPage.textInAuthorizationTitle();
@@ -87,36 +139,63 @@ public class MainPageTest extends StaticData {
     @DisplayName("Авторизация на сайте через кнопку в хэдере страницы")
     @Test
     public void authorizationFromLoginButtonTest() {
-        MainPage mainPage = new MainPage();
+        MainPage mainPage = new MainPage(driver);
         mainPage.openMainPage();
         mainPage.clickPersonalAccountButton();
-        LoginPage loginPage = new LoginPage();
+        registerPage = new RegisterPage(driver);
+        registerPage.openRegisterPage();
+        registerPage.typeName();
+        registerPage.typeEmail();
+        registerPage.typePassword();
+        registerPage.clickRegisterButton();
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(webDriver ->
+                driver.getCurrentUrl().contains("login"));
+        loginPage = new LoginPage(driver);
         loginPage.typeEmail();
         loginPage.typePassword();
         loginPage.clickAuthorizationButton();
-        PersonalAccountPage personalAccountPage = new PersonalAccountPage();
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(webDriver ->
+                registerPage.getItemFromLocalStorage("accessToken") != null);
+        accessToken = registerPage.getItemFromLocalStorage("accessToken");
+        accessToken = accessToken.replace("Bearer ", "");
+        PersonalAccountPage personalAccountPage = new PersonalAccountPage(driver);
         mainPage.clickPersonalAccountButtonInHeader();
-        Assert.assertTrue(personalAccountPage.textInConfirmation().contains("Сохранить"));
+        assertTrue(personalAccountPage.textInConfirmation().contains("Сохранить"));
     }
 
     @DisplayName("Авторизация на сайте через кнопку по центру страницы")
     @Test
     public void authorizationFromPersonalAccountButtonTest() {
-        MainPage mainPage = new MainPage();
+        MainPage mainPage = new MainPage(driver);
         mainPage.openMainPage();
         mainPage.clickPersonalAccountButton();
-        LoginPage loginPage = new LoginPage();
+        registerPage = new RegisterPage(driver);
+        registerPage.openRegisterPage();
+        registerPage.typeName();
+        registerPage.typeEmail();
+        registerPage.typePassword();
+        registerPage.clickRegisterButton();
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(webDriver ->
+                driver.getCurrentUrl().contains("login"));
+        loginPage = new LoginPage(driver);
         loginPage.typeEmail();
         loginPage.typePassword();
         loginPage.clickAuthorizationButton();
-        PersonalAccountPage personalAccountPage = new PersonalAccountPage();
-        mainPage.clickPersonalAccountButtonInHeader();
-        Assert.assertTrue(personalAccountPage.textInConfirmation().contains("Сохранить"));
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(webDriver ->
+                registerPage.getItemFromLocalStorage("accessToken") != null);
+        accessToken = registerPage.getItemFromLocalStorage("accessToken");
+        accessToken = accessToken.replace("Bearer ", "");
+        mainPage.clickPerAccountButtonAfterAuth();
+        assertTrue(mainPage.textOrderTitle().contains("идентификатор заказа"));
     }
 
 
     @After
     public void after() {
+        if (accessToken != null) {
+            RegisterPage registerPage = new RegisterPage(driver);
+            registerPage.delete(accessToken);
+        }
         driver.quit();
     }
 
