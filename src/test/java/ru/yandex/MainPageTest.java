@@ -7,7 +7,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.yandex.pages.LoginPage;
 import ru.yandex.pages.MainPage;
@@ -21,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 
-public class MainPageTest  {
+public class MainPageTest {
 
     private static WebDriver driver;
     private static String accessToken;
@@ -59,7 +58,7 @@ public class MainPageTest  {
                                             && rect.getX() + rect.getWidth() <= windowSize.getWidth()
                                             && rect.getY() + rect.getHeight() <= windowSize.getHeight();
                                 });
-        assertTrue("Элемент не находится в области видимости", isElementInViewport);
+        assertTrue(mainPage.selectedIngredientButton().contains("type_current"));
     }
 
     @DisplayName("Переход в секцию с соусами")
@@ -85,6 +84,7 @@ public class MainPageTest  {
                                             && rect.getY() + rect.getHeight() <= windowSize.getHeight();
                                 });
 
+        assertTrue(mainPage.selectedSousesButton().contains("type_current"));
     }
 
     @DisplayName("Переход в секцию с булочками")
@@ -110,7 +110,7 @@ public class MainPageTest  {
                                             && rect.getX() + rect.getWidth() <= windowSize.getWidth()
                                             && rect.getY() + rect.getHeight() <= windowSize.getHeight();
                                 });
-
+        assertTrue(mainPage.selectedBunButton().contains("type_current"));
     }
 
     @DisplayName("Переход на страницу авторизации из хэдера")

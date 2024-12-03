@@ -1,16 +1,12 @@
 package ru.yandex.pages;
 
-import com.github.javafaker.Faker;
 import io.qameta.allure.Step;
-import io.restassured.response.Response;
-import org.apache.http.HttpStatus;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import ru.yandex.data.StaticData;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.equalTo;
 
 public class RegisterPage extends StaticData {
 
@@ -71,7 +67,7 @@ public class RegisterPage extends StaticData {
 
     @Step("Удаление пользователя")
     public void delete(String accessToken) {
-        Response response = given()
+        given()
                 .header("Content-type", "application/json")
                 .auth().oauth2(accessToken)
                 .when()

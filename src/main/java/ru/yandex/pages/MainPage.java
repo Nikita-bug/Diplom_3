@@ -24,6 +24,9 @@ public class MainPage {
             " ml-2'][text()='Конструктор']");
     public static final By CONSTRUCTOR_TITLE = By.xpath(".//h1[@class = 'text text_type_main-large" +
             " mb-5 mt-10'][text()='Соберите бургер']");
+    public static final By SECTION_SAUCES_SELECTED = By.xpath("//div[@style]/div[2]");
+    public static final By SECTION_INGREDIENT_SELECTED = By.xpath("//div[@style]/div[3]");
+    public static final By SECTION_BUNS_SELECTED = By.xpath("//div[@style]/div[1]");
     public static final By SITE_LOGO = By.xpath(".//div[@class = 'AppHeader_header__logo__2D0X2']");
     public static final By SECTION_INGREDIENTS = By.xpath(".//span[contains(text(),'Начинки')]");
     public static final By SECTION_SAUCES = By.xpath(".//span[contains(text(),'Соусы')]");
@@ -96,6 +99,21 @@ public class MainPage {
     @Step("Возвращает заголовок раздела с конструктором")
     public String textOrderTitle() {
         return driver.findElement(ORDER_ID).getText();
+    }
+
+    @Step("Возвращает название div класса с Соусами")
+    public String selectedSousesButton() {
+        return driver.findElement(SECTION_SAUCES_SELECTED).getAttribute("class");
+    }
+
+    @Step("Возвращает название div класса с Ингридиентами")
+    public String selectedIngredientButton() {
+        return driver.findElement(SECTION_INGREDIENT_SELECTED).getAttribute("class");
+    }
+
+    @Step("Возвращает название div класса с Булочками")
+    public String selectedBunButton() {
+        return driver.findElement(SECTION_BUNS_SELECTED).getAttribute("class");
     }
 
 

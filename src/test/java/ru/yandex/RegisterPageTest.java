@@ -8,12 +8,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.yandex.data.StaticData;
 import ru.yandex.pages.LoginPage;
 import ru.yandex.pages.MainPage;
-import ru.yandex.pages.PersonalAccountPage;
 import ru.yandex.pages.RegisterPage;
 
 import java.time.Duration;
@@ -95,7 +93,7 @@ public class RegisterPageTest extends StaticData {
             RegisterPage registerPage = new RegisterPage(driver);
             registerPage.delete(accessToken);
         }
-       driver.quit();
+        driver.quit();
     }
 
 
